@@ -19,5 +19,5 @@ export const routes: Routes = [
 		path: 'dashboard',
 		loadComponent: () => import('./pages/dashboard/dashboard.component').then(c => c.DashboardComponent),
 	},
-	{ path: '',   redirectTo: '/auth/sign-in', pathMatch: 'full' },
+	{ path: '', redirectTo: '/auth/sign-in', pathMatch: 'full' },
 ];

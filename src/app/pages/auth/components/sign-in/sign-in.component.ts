@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import Swal from 'sweetalert2'
 
 import { AuthService } from '../../services/auth.service';
 
@@ -17,15 +18,17 @@ export class SignInComponent {
   formBuilder = inject(FormBuilder);
   authService = inject(AuthService);
   signInForm = this.formBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    email: ['dialrasa@google.com', [Validators.required, Validators.email]],
+    password: ['diego123456', [Validators.required, Validators.minLength(6)]]
   });
 
   signIn(): void {
     const params = this.signInForm.value as { email: string, password: string };
     
-    this.authService.signIn(params).subscribe((response) => {
-      console.log(response);
+    this.authService.signIn(params).subscribe({
+      error: (err) => {
+        Swal.fire(err);
+      }
     });
   }
 }

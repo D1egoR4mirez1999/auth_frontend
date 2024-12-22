@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
+
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 
 import { SignInResponse } from '../interfaces/sign-in.interface';
 import { User } from '../interfaces/user.interface';
@@ -39,7 +40,10 @@ export class AuthService {
           this._authState.set(authState.AUTHENTICATED);
           localStorage.setItem('token', response.token);
         }),
-        map(() => true)
+        map(() => true),
+        catchError((err) => {
+          return throwError(() => err.error.message);
+        })
       );
   }
 }

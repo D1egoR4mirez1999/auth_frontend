@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { isAuthenticatedGuard } from './pages/auth/guards/is-authenticated.guard';
+import { isUnauthenticatedGuard } from './pages/auth/guards/is-unauthenticated.guard';
 
 export const routes: Routes = [
   {
@@ -15,7 +16,8 @@ export const routes: Routes = [
         path: 'sign-up',
         loadComponent: () => import('./pages/auth/components/sign-up/sign-up.component').then(c => c.SignUpComponent),
       }
-    ]
+    ],
+    canActivate: [isUnauthenticatedGuard],
   },
   {
     path: 'dashboard',

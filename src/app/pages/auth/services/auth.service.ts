@@ -1,10 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-
 import { catchError, map, Observable, of, throwError } from 'rxjs';
 
 import { SignInResponse } from '../interfaces/sign-in.interface';
 import { User } from '../interfaces/user.interface';
+import { RefreshToken } from '../interfaces/refresh-token.interface';
 
 import { environment } from '../../../../environments/environment';
 import { authState } from '../enums/auth-state.enum';
@@ -61,7 +61,7 @@ export class AuthService {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
 
-    return this._http.post<SignInResponse>(`${this._apiUrl}/auth/refresh-token`, { headers })
+    return this._http.get<RefreshToken>(`${this._apiUrl}/auth/refresh-token`, { headers })
       .pipe(
         map((response) => this.setAuthenticatedResponse(response)),
         catchError(() => {

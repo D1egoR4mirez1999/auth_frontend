@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { isAuthenticatedGuard } from './pages/auth/guards/is-authenticated.guard';
+
 export const routes: Routes = [
   {
     path: 'auth',
@@ -18,6 +20,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./pages/dashboard/dashboard.component').then(c => c.DashboardComponent),
+    canActivate: [isAuthenticatedGuard],
   },
   { path: '', redirectTo: '/auth/sign-in', pathMatch: 'full' },
 ];

@@ -1,1 +1,6 @@
-<router-outlet />
+@if (isCheckingState()) {
+  <h1>Loading</h1>
+} @else {
+  <router-outlet />
+}
+

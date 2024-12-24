@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 
 import { SignInResponse } from '../interfaces/sign-in.interface';
 import { User } from '../interfaces/user.interface';
@@ -27,22 +27,46 @@ export class AuthService {
       password: params.password
     })
       .pipe(
-        tap((response: SignInResponse) => {
-          const user: User = {
-            _id: response._id,
-            email: response.email,
-            name: response.name,
-            isActive: response.isActive,
-            roles: response.roles
-          };
-
-          this._currentUser.set(user);
-          this._authState.set(authState.AUTHENTICATED);
-          localStorage.setItem('token', response.token);
-        }),
-        map(() => true),
+        map((response) => this.setAuthenticatedResponse(response)),
         catchError((err) => {
           return throwError(() => err.error.message);
+        })
+      );
+  }
+
+  private setAuthenticatedResponse(response: SignInResponse): boolean {
+    const user: User = {
+      _id: response._id,
+      email: response.email,
+      name: response.name,
+      isActive: response.isActive,
+      roles: response.roles
+    };
+
+    this._currentUser.set(user);
+    this._authState.set(authState.AUTHENTICATED);
+    localStorage.setItem('token', response.token);
+
+    return true;
+  }
+
+  refreshToken(): Observable<boolean> {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      return of(false);
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+
+    return this._http.post<SignInResponse>(`${this._apiUrl}/auth/refresh-token`, { headers })
+      .pipe(
+        map((response) => this.setAuthenticatedResponse(response)),
+        catchError(() => {
+          this._authState.set(authState.UNAUTHENTICATED);
+          return throwError(() => 'Session expired');
         })
       );
   }

@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'http://localhost:3000'
+  apiUrl: 'https://auth-backend-production-b7d6.up.railway.app'
 }

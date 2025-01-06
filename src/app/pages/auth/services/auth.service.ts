@@ -54,6 +54,7 @@ export class AuthService {
     const token = localStorage.getItem('token');
 
     if (!token) {
+      this._authState.set(authState.UNAUTHENTICATED);
       return of(false);
     }
 
@@ -69,5 +70,11 @@ export class AuthService {
           return throwError(() => 'Session expired');
         })
       );
+  }
+
+  signOut(): void {
+    this._currentUser.set(null);
+    this._authState.set(authState.UNAUTHENTICATED);
+    localStorage.removeItem('token');
   }
 }

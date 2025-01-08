@@ -3,6 +3,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
 
 import { SignInResponse } from '../interfaces/sign-in.interface';
+import { SignUpResponse } from '../interfaces/sign-up.interface';
 import { User } from '../interfaces/user.interface';
 import { RefreshToken } from '../interfaces/refresh-token.interface';
 
@@ -25,6 +26,20 @@ export class AuthService {
     return this._http.post<SignInResponse>(`${this._apiUrl}/auth/signin`, {
       email: params.email,
       password: params.password
+    })
+      .pipe(
+        map((response) => this.setAuthenticatedResponse(response)),
+        catchError((err) => {
+          return throwError(() => err.error.message);
+        })
+      );
+  }
+
+  signUp(params: { email: string, password: string, name: string }): Observable<boolean> {
+    return this._http.post<SignUpResponse>(`${this._apiUrl}/auth/signup`, {
+      email: params.email,
+      password: params.password,
+      name: params.name,
     })
       .pipe(
         map((response) => this.setAuthenticatedResponse(response)),

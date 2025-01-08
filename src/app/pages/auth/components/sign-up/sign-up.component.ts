@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -24,5 +26,14 @@ export class SignUpComponent {
 
   signUp(): void {
     const params = this.signUpForm.value as { email: string, password: string, name: string };
+
+    this.authService.signUp(params).subscribe({
+      next: () => {
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        Swal.fire(err);
+      }
+    });
   }
 }
